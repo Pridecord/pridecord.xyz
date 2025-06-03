@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pridecord Landing Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png">
+  <style>
+    html, body, * {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevent scrolling */
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+    body {
+      background: #000010; /* Dark blue */
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+    #stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+    .centered-img {
+      max-width: 90vw;
+      max-height: 60vh;
+      display: block;
+      margin: 0 auto;
+      z-index: 1;
+      position: relative;
+    }
+    .join-btn {
+      margin-top: 32px;
+      padding: 12px 20px; /* Reduced horizontal padding */
+      min-width: 180px;
+      font-size: 1.2rem;
+      background: #5865f2;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      z-index: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Slightly reduced gap */
+      justify-content: center; /* Center content */
+    }
+    .join-btn:hover {
+      background: #3342e2;
+    }
+    .discord-logo {
+      height: 1.6em;
+      width: auto;
+      vertical-align: middle;
+    }
+    #typewriter-text {
+      padding: 0;
+      margin-left: 0;
+      text-align: center;
+    }
+    #cursor {
+      display: inline-block;
+      width: 1ch;
+      vertical-align: middle;
+      margin-left: 0;
+    }
+    .rainbow-title {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-size: 5rem;
+      font-weight: 900;
+      text-align: center;
+      margin-top: 0px;
+      margin-bottom: 0;
+      background: linear-gradient(
+        90deg,
+        #ff004d 0%,
+        #ff8c00 7%,
+        #faff00 14%,
+        #21ff00 21%,
+        #00cfff 28%,
+        #2f00ff 35%,
+        #ff00c8 42%,
+        #ff004d 49%,
+        #ff8c00 56%,
+        #faff00 63%,
+        #21ff00 70%,
+        #00cfff 77%,
+        #2f00ff 84%,
+        #ff00c8 91%,
+        #ff004d 98%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      animation: rainbow-move 10s linear infinite;
+      transition: text-shadow 0.2s; /* <-- Move transition here */
+    }
+
+    .rainbow-title:hover {
+      text-shadow:
+        0 0 12px #ffffff2e,
+        0 0 24px #ff00c816,
+        0 0 36px #00d0ff22,
+        0 0 48px #ff8c002b;
+    }
+
+    @keyframes rainbow-move {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+  </style>
+</head>
+<body>
+  <h1 class="rainbow-title">Pridecord</h1>
+  <canvas id="stars-canvas"></canvas>
+  <img
+    src="Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png"
+    alt="Pridecord Logo"
+    class="centered-img"
+    style="max-width: 220px; max-height: 220px;"
+  >
+  <div id="typewriter-text" style="color: #fff; font-size: 1.3rem; margin-top: 13px; margin-bottom: 10px; text-align: center; z-index: 1; position: relative; font-family: 'Roboto', Arial, sans-serif;">
+    <span id="typewriter"></span><span id="cursor" style="display:inline-block;width:1ch;">|</span>
+  </div>
+  <button
+    class="join-btn"
+    onclick="window.open('https://discord.gg/LGBTQIA', '_blank')"
+  >
+    <img
+      src="Discord-Logo-700x394-2074227168-removebg-preview.png"
+      alt="Discord Logo"
+      class="discord-logo"
+    >
+    Join Now!
+  </button>
+  <button
+    class="join-btn"
+    style="margin-top: 14px; background: #ff8c00;"
+    onclick="window.location.href='/rules'"
+  >
+    <span style="font-weight: 700;">Read the Rules</span>
+  </button>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Simple floating stars animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let mouse = { x: null, y: null, radius: 160 }; // Increased radius
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createStars(count) {
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5 + 0.5,
+          speed: Math.random() * 0.3 + 0.05,
+          angle: Math.random() * Math.PI * 2,
+          drift: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    // Track mouse position
+    canvas.addEventListener('mousemove', function(e) {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+    canvas.addEventListener('mouseleave', function() {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let star of stars) {
+        // Mouse repulsion
+        if (mouse.x !== null && mouse.y !== null) {
+          let dx = star.x - mouse.x;
+          let dy = star.y - mouse.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouse.radius) {
+            // Move star away from mouse
+            let angle = Math.atan2(dy, dx);
+            let force = (mouse.radius - dist) / mouse.radius;
+            star.x += Math.cos(angle) * force * 2; // Reduced force multiplier for slower movement
+            star.y += Math.sin(angle) * force * 2;
+          }
+        }
+
+        // Floating motion
+        star.y += star.speed;
+        star.x += Math.sin(star.angle) * star.drift * 0.2;
+        star.angle += 0.01;
+
+        // Wrap around
+        if (star.y > canvas.height) {
+          star.y = 0;
+          star.x = Math.random() * canvas.width;
+        }
+        if (star.x > canvas.width) star.x = 0;
+        if (star.x < 0) star.x = canvas.width;
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.globalAlpha = 0.8;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      requestAnimationFrame(animateStars);
+    }
+
+    function initStars() {
+      resizeCanvas();
+      createStars(Math.floor(window.innerWidth * window.innerHeight / 1800));
+      animateStars();
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createStars(Math.floor(window.innerWidth * window.innerHeight / 1800));
+    });
+
+    initStars();
+
+    // Typewriter effect for looping phrases
+    const phrases = ["A safe space.", "A good place."];
+    const typewriter = document.getElementById('typewriter');
+    const cursor = document.getElementById('cursor');
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let typing = true;
+    let blinkInterval = null;
+
+    function blinkCursor() {
+      cursor.style.visibility = (cursor.style.visibility === 'hidden') ? 'visible' : 'hidden';
+    }
+
+    function startBlink() {
+      if (!blinkInterval) blinkInterval = setInterval(blinkCursor, 500);
+    }
+
+    function stopBlink() {
+      if (blinkInterval) clearInterval(blinkInterval);
+      blinkInterval = null;
+      cursor.style.visibility = 'visible';
+    }
+
+    function typeLoop() {
+      stopBlink();
+      const currentPhrase = phrases[phraseIndex];
+      if (typing) {
+        if (charIndex < currentPhrase.length) {
+          typewriter.textContent += currentPhrase[charIndex];
+          charIndex++;
+          setTimeout(typeLoop, 70);
+        } else {
+          typing = false;
+          startBlink();
+          setTimeout(typeLoop, 1200);
+        }
+      } else {
+        if (charIndex > 0) {
+          typewriter.textContent = currentPhrase.slice(0, charIndex - 1);
+          charIndex--;
+          setTimeout(typeLoop, 40);
+        } else {
+          typing = true;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+          setTimeout(typeLoop, 400);
+        }
+      }
+    }
+
+    typeLoop();
+  });
+  </script>
+</body>
+</html>
