@@ -19,11 +19,11 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden; /* Prevent scrolling */
+      overflow: hidden;
       font-family: 'Roboto', Arial, sans-serif;
     }
     body {
-      background: #000010; /* Dark blue */
+      background: #000010;
       height: 100vh;
       width: 100vw;
       display: flex;
@@ -53,7 +53,7 @@
     }
     .join-btn {
       margin-top: 32px;
-      padding: 12px 20px; /* Reduced horizontal padding */
+      padding: 12px 20px;
       min-width: 180px;
       font-size: 1.2rem;
       background: #5865f2;
@@ -66,8 +66,8 @@
       position: relative;
       display: flex;
       align-items: center;
-      gap: 10px; /* Slightly reduced gap */
-      justify-content: center; /* Center content */
+      gap: 10px;
+      justify-content: center;
     }
     .join-btn:hover {
       background: #3342e2;
@@ -119,7 +119,7 @@
       background-clip: text;
       color: transparent;
       animation: rainbow-move 10s linear infinite;
-      transition: text-shadow 0.2s; /* <-- Move transition here */
+      transition: text-shadow 0.2s;
     }
 
     .rainbow-title:hover {
@@ -172,7 +172,7 @@
     const canvas = document.getElementById('stars-canvas');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    let mouse = { x: null, y: null, radius: 160 }; // Increased radius
+    let mouse = { x: null, y: null, radius: 160 };
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -193,7 +193,6 @@
       }
     }
 
-    // Track mouse position
     canvas.addEventListener('mousemove', function(e) {
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
@@ -213,20 +212,17 @@
           let dy = star.y - mouse.y;
           let dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < mouse.radius) {
-            // Move star away from mouse
             let angle = Math.atan2(dy, dx);
             let force = (mouse.radius - dist) / mouse.radius;
-            star.x += Math.cos(angle) * force * 2; // Reduced force multiplier for slower movement
+            star.x += Math.cos(angle) * force * 2;
             star.y += Math.sin(angle) * force * 2;
           }
         }
 
-        // Floating motion
         star.y += star.speed;
         star.x += Math.sin(star.angle) * star.drift * 0.2;
         star.angle += 0.01;
 
-        // Wrap around
         if (star.y > canvas.height) {
           star.y = 0;
           star.x = Math.random() * canvas.width;
@@ -257,8 +253,8 @@
 
     initStars();
 
-    // Typewriter effect for looping phrases
-    const phrases = ["A safe space.", "A good place."];
+    // Phrases here
+    const phrases = ["Phrase 1", "I'm too lazy to write all of these", "guh"];
     const typewriter = document.getElementById('typewriter');
     const cursor = document.getElementById('cursor');
     let phraseIndex = 0;
