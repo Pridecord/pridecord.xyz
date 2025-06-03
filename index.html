@@ -33,16 +33,6 @@
       position: relative;
       font-family: 'Roboto', Arial, sans-serif;
     }
-    #stars-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-      display: block;
-    }
     .centered-img {
       max-width: 90vw;
       max-height: 60vh;
@@ -70,7 +60,12 @@
       justify-content: center;
     }
     .join-btn:hover {
-      background: #3342e2;
+      background: #F342e2;
+      text-shadow:
+        0 0 12px #ffffff2e,
+        0 0 24px #ff00c816,
+        0 0 36px #00d0ff22,
+        0 0 48px #ff8c002b;
     }
     .discord-logo {
       height: 1.6em;
@@ -87,6 +82,7 @@
       width: 1ch;
       vertical-align: middle;
       margin-left: 0;
+      transform: translateX( -4.5px) translateY( -3px);
     }
     .rainbow-title {
       font-family: 'Roboto', Arial, sans-serif;
@@ -129,28 +125,78 @@
         0 0 36px #00d0ff22,
         0 0 48px #ff8c002b;
     }
+    .join-btn:hover {
+      background: #3342e2;
+      text-shadow:
+        0 0 12px #ffffff2e,
+        0 0 24px #ff00c816,
+        0 0 36px #00d0ff22,
+        0 0 48px #ff8c002b;
+    }
+    
+    #wave-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+      background: #000010;
+    }
 
     @keyframes rainbow-move {
       0% { background-position: 0% 50%; }
       100% { background-position: 100% 50%; }
     }
+
+    #theme-menu {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 10;
+      background: #181828ee;
+      border-radius: 10px;
+      padding: 10px 16px;
+      box-shadow: 0 2px 16px #0005;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    #theme-menu label {
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 1.1em;
+    }
+
+    #theme-menu select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
   <h1 class="rainbow-title">Pridecord</h1>
-  <canvas id="stars-canvas"></canvas>
+  <canvas id="wave-canvas"></canvas>
   <img
     src="Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png"
     alt="Pridecord Logo"
     class="centered-img"
-    style="max-width: 220px; max-height: 220px;"
+    style="max-width: 300px; max-height: 300px; transform: translateY(-50px);"
   >
-  <div id="typewriter-text" style="color: #fff; font-size: 1.3rem; margin-top: 13px; margin-bottom: 10px; text-align: center; z-index: 1; position: relative; font-family: 'Roboto', Arial, sans-serif;">
+  <div id="typewriter-text"
+    style="color: #fff; font-size: 1.3rem; margin-top: 13px; margin-bottom: 10px; text-align: center; z-index: 1; position: relative; font-family: 'Roboto', Arial, sans-serif; transform: translateY(-50px);">
     <span id="typewriter"></span><span id="cursor" style="display:inline-block;width:1ch;">|</span>
   </div>
   <button
     class="join-btn"
     onclick="window.open('https://discord.gg/LGBTQIA', '_blank')"
+    style="transform: translateY(-50px)"
   >
     <img
       src="Discord-Logo-700x394-2074227168-removebg-preview.png"
@@ -161,99 +207,27 @@
   </button>
   <button
     class="join-btn"
-    style="margin-top: 14px; background: #ff8c00;"
+    style="margin-top: 14px; background: #ff8c00; transform: translateY(-50px);"
     onclick="window.location.href='/rules'"
   >
     <span style="font-weight: 700;">Read the Rules</span>
   </button>
+
+  <div id="theme-menu">
+    <label style="color:#fff; font-weight:700; margin-bottom:4px; font-size:1.1em;">Theme</label>
+    <select id="theme-select" style="padding: 6px 10px; border-radius: 6px; border: none; font-size: 1em;">
+      <option value="rainbow">Rainbow</option>
+      <option value="lesbian">Lesbian</option>
+      <option value="bi">Bisexual</option>
+      <option value="trans">Transgender</option>
+      <option value="pan">Pansexual</option>
+      <option value="ace">Asexual</option>
+      <option value="nonbinary">Nonbinary</option>
+    </select>
+  </div>
+
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Simple floating stars animation
-    const canvas = document.getElementById('stars-canvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    let mouse = { x: null, y: null, radius: 160 };
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createStars(count) {
-      stars = [];
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 1.5 + 0.5,
-          speed: Math.random() * 0.3 + 0.05,
-          angle: Math.random() * Math.PI * 2,
-          drift: Math.random() * 0.5 + 0.2
-        });
-      }
-    }
-
-    canvas.addEventListener('mousemove', function(e) {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-    });
-    canvas.addEventListener('mouseleave', function() {
-      mouse.x = null;
-      mouse.y = null;
-    });
-
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let star of stars) {
-        // Mouse repulsion
-        if (mouse.x !== null && mouse.y !== null) {
-          let dx = star.x - mouse.x;
-          let dy = star.y - mouse.y;
-          let dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < mouse.radius) {
-            let angle = Math.atan2(dy, dx);
-            let force = (mouse.radius - dist) / mouse.radius;
-            star.x += Math.cos(angle) * force * 2;
-            star.y += Math.sin(angle) * force * 2;
-          }
-        }
-
-        star.y += star.speed;
-        star.x += Math.sin(star.angle) * star.drift * 0.2;
-        star.angle += 0.01;
-
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
-        if (star.x > canvas.width) star.x = 0;
-        if (star.x < 0) star.x = canvas.width;
-
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
-        ctx.globalAlpha = 0.8;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-      requestAnimationFrame(animateStars);
-    }
-
-    function initStars() {
-      resizeCanvas();
-      createStars(Math.floor(window.innerWidth * window.innerHeight / 1800));
-      animateStars();
-    }
-
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      createStars(Math.floor(window.innerWidth * window.innerHeight / 1800));
-    });
-
-    initStars();
-
-    // Phrases here
     const phrases = ["Phrase 1", "I'm too lazy to write all of these", "guh"];
     const typewriter = document.getElementById('typewriter');
     const cursor = document.getElementById('cursor');
@@ -305,5 +279,123 @@
     typeLoop();
   });
   </script>
+  <script>
+const prideFlags = {
+  rainbow: [
+    "#ff004d", "#ff8c00", "#faff00", "#21ff00", "#00cfff", "#2f00ff", "#ff00c8", "#ff004d"
+  ],
+  lesbian: [
+    "#d52d00", "#ff9a56", "#ffffff", "#d362a4", "#a30262", "#d52d00"
+  ],
+  bi: [
+    "#d60270", "#9b4f96", "#0038a8", "#d60270"
+  ],
+  trans: [
+    "#5bcffb", "#f5abb9", "#ffffff", "#f5abb9", "#5bcffb"
+  ],
+  pan: [
+    "#ff218c", "#ffd800", "#21b1ff", "#ff218c"
+  ],
+  ace: [
+    "#000000", "#a3a3a3", "#ffffff", "#800080", "#000000"
+  ],
+  nonbinary: [
+    "#fff430", "#ffffff", "#9c59d1", "#000000", "#fff430"
+  ]
+};
+
+let currentFlag = 'rainbow';
+
+function getFlagColor(flag, idx, total, time) {
+  const colors = prideFlags[flag] || prideFlags['rainbow'];
+  const t = ((idx / total) + (time * 0.00012)) % 1;
+  const scaled = t * (colors.length - 1);
+  const i = Math.floor(scaled);
+  const frac = scaled - i;
+  function lerpColor(a, b, t) {
+    const ar = parseInt(a.slice(1, 3), 16);
+    const ag = parseInt(a.slice(3, 5), 16);
+    const ab = parseInt(a.slice(5, 7), 16);
+    const br = parseInt(b.slice(1, 3), 16);
+    const bg = parseInt(b.slice(3, 5), 16);
+    const bb = parseInt(b.slice(5, 7), 16);
+    const r = Math.round(ar + (br - ar) * t);
+    const g = Math.round(ag + (bg - ag) * t);
+    const b_ = Math.round(ab + (bb - ab) * t);
+    return `rgb(${r},${g},${b_})`;
+  }
+  if (i >= colors.length - 1) return colors[colors.length - 1];
+  return lerpColor(colors[i], colors[i + 1], frac);
+}
+</script>
+  <script>
+(function() {
+  const canvas = document.getElementById('wave-canvas');
+  const ctx = canvas.getContext('2d');
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const cols = 48;
+  const rows = 18;
+  const dotRadius = 5;
+
+  function drawWave(time) {
+    const dotSpacingX = width / (cols + 1);
+    const dotSpacingY = height / (rows + 1);
+    ctx.clearRect(0, 0, width, height);
+
+    const typeDiv = document.getElementById('typewriter-text');
+    if (typeDiv) {
+      const rect = typeDiv.getBoundingClientRect();
+      ctx.save();
+      ctx.globalAlpha = 0.80;
+      ctx.fillStyle = "#000";
+      ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+      ctx.restore();
+    }
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const phase = (x / cols) * Math.PI * 2 + (y / rows) * Math.PI + time * 0.0015;
+        const wave = Math.sin(phase) * 32 + Math.cos(phase * 1.5 + time * 0.0007) * 16;
+
+        const px = dotSpacingX * (x + 1);
+        const py = dotSpacingY * (y + 1) + wave;
+
+        let color = getFlagColor(currentFlag, x, cols, time + y * 100);
+
+        ctx.beginPath();
+        ctx.arc(px, py, dotRadius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 16;
+        ctx.globalAlpha = 0.85;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  function animate(time) {
+    drawWave(time);
+    requestAnimationFrame(animate);
+  }
+  animate(0);
+
+  document.getElementById('theme-select').addEventListener('change', function(e) {
+    currentFlag = e.target.value;
+  });
+})();
+</script>
 </body>
 </html>
