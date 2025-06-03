@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Pridecord Rules</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Add Roboto font from Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
     body {
@@ -42,16 +41,15 @@
       border: 1.5px solid #22224a;
       z-index: 1;
       position: relative;
-      /* Add space for the left border */
       padding-left: 34px;
-      overflow: hidden; /* Ensures ::before is clipped by border-radius */
+      overflow: hidden;
     }
     .rules-box::before {
       content: "";
       position: absolute;
-      top: 0;         /* Changed from 16px */
+      top: 0;
       left: 0;
-      bottom: 0;      /* Changed from 16px */
+      bottom: 0;
       width: 3px;
       border-radius: 3px 0 0 3px;
       background: linear-gradient(
@@ -83,7 +81,7 @@
     .subrule-list {
       margin-top: 6px;
       margin-bottom: 6px;
-      margin-left: 30px; /* Changed from 8px to 0 for less indent */
+      margin-left: 30px;
       list-style: none;
       padding-left: 0;
       font-size: 0.97em;
@@ -94,7 +92,6 @@
       margin-bottom: 2px;
       margin-left: 0;
       position: relative;
-      /* Move subrule down by half its height */
       top: 0.2em;
     }
     .subrule-pointer {
@@ -134,14 +131,14 @@
         <ul class="subrule-list">
           <li>
             <span class="subrule-pointer"></span>
-            1.1 Be kind and respectful to all members.
+            Rule 1.1
           </li>
         </ul>
       </li>
       <li>Rule 2</li>
       <li>Rule 3</li>
       <li>Rule 4</li>
-      <!-- Add more rules as needed -->
+      <!--More rules here if needed-->
     </ul>
   </div>
   <button
@@ -152,7 +149,6 @@
     Back to Home
   </button>
   <script>
-    // Floating stars background (same as index.html)
     document.addEventListener('DOMContentLoaded', function () {
       const canvas = document.getElementById('stars-canvas');
       const ctx = canvas.getContext('2d');
@@ -191,7 +187,6 @@
       function animateStars() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let star of stars) {
-          // Mouse repulsion
           if (mouse.x !== null && mouse.y !== null) {
             let dx = star.x - mouse.x;
             let dy = star.y - mouse.y;
@@ -203,11 +198,9 @@
               star.y += Math.sin(angle) * force * 2;
             }
           }
-          // Floating motion
           star.y += star.speed;
           star.x += Math.sin(star.angle) * star.drift * 0.2;
           star.angle += 0.01;
-          // Wrap around
           if (star.y > canvas.height) {
             star.y = 0;
             star.x = Math.random() * canvas.width;
