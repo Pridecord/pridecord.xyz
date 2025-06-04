@@ -161,6 +161,15 @@
       <option value="pan">Pansexual</option>
       <option value="ace">Asexual</option>
       <option value="nonbinary">Nonbinary</option>
+      <option value="agender">Agender</option>
+      <option value="aromantic">Aromantic</option>
+      <option value="demiboy">Demiboy</option>
+      <option value="demigirl">Demigirl</option>
+      <option value="genderfluid">Genderfluid</option>
+      <option value="genderqueer">Genderqueer</option>
+      <option value="intersex">Intersex</option>
+      <option value="polysexual">Polysexual</option>
+      <option value="progress">Progress Pride</option>
     </select>
   </div>
   <h1>Community Rules</h1>
@@ -209,6 +218,33 @@ const prideFlags = {
   ],
   nonbinary: [
     "#fff430", "#ffffff", "#9c59d1", "#000000", "#fff430"
+  ],
+  agender: [
+    "#000000", "#b9f483", "#ffffff", "#b9b9b9", "#ffffff", "#b9f483", "#000000"
+  ],
+  aromantic: [
+    "#3da542", "#a7d379", "#ffffff", "#a9a9a9", "#000000", "#3da542"
+  ],
+  demiboy: [
+    "#7f7f7f", "#c3c3c3", "#6cb4dd", "#ffffff", "#6cb4dd", "#c3c3c3", "#7f7f7f"
+  ],
+  demigirl: [
+    "#7f7f7f", "#c3c3c3", "#f7b7d7", "#ffffff", "#f7b7d7", "#c3c3c3", "#7f7f7f"
+  ],
+  genderfluid: [
+    "#ff75a2", "#ffffff", "#be18d6", "#000000", "#333ebd", "#ff75a2"
+  ],
+  genderqueer: [
+    "#b57edc", "#ffffff", "#4a8123", "#b57edc"
+  ],
+  intersex: [
+    "#ffd800", "#ffd800", "#ffd800", "#7902aa", "#ffd800"
+  ],
+  polysexual: [
+    "#f61cb9", "#07d569", "#1ba8ff", "#f61cb9"
+  ],
+  progress: [
+    "#e50000", "#ff8c00", "#faff00", "#21ff00", "#00cfff", "#2f00ff", "#ff00c8", "#ff004d", "#5bcffb", "#f5abb9", "#ffffff", "#a30262", "#000000", "#e50000"
   ]
 };
 
@@ -290,15 +326,42 @@ function getFlagColor(flag, idx, total, time) {
     }
   }
 
+  let waveTime = 0;
+
+  // Try to restore waveTime from localStorage
+  const savedWaveTime = localStorage.getItem('pridecord_wave_time');
+  if (savedWaveTime) {
+    waveTime = parseFloat(savedWaveTime) || 0;
+  }
+
   function animate(time) {
-    drawWave(time);
+    // Use our own waveTime instead of the system time
+    drawWave(waveTime);
+    waveTime += 16.67; // ~60fps, increment by ms per frame
+    localStorage.setItem('pridecord_wave_time', waveTime);
     requestAnimationFrame(animate);
   }
-  animate(0);
+  animate(waveTime);
 
   document.getElementById('theme-select').addEventListener('change', function(e) {
     currentFlag = e.target.value;
+    // Save theme to cookie for 1 year
+    document.cookie = "pridecord_theme=" + encodeURIComponent(currentFlag) + ";path=/;max-age=" + (60 * 60 * 24 * 365);
   });
+
+  // On page load, check for theme cookie
+  (function() {
+    function getCookie(name) {
+      const value = "; " + document.cookie;
+      const parts = value.split("; " + name + "=");
+      if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+    const savedTheme = getCookie("pridecord_theme");
+    if (savedTheme && prideFlags[savedTheme]) {
+      currentFlag = savedTheme;
+      document.getElementById('theme-select').value = savedTheme;
+    }
+  })();
 })();
   </script>
 </body>
