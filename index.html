@@ -237,55 +237,102 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const phrases = ["Phrase 1", "I'm too lazy to write all of these", "guh"];
-    const typewriter = document.getElementById('typewriter');
-    const cursor = document.getElementById('cursor');
-    let phraseIndex = 0;
-    let charIndex = 0;
-    let typing = true;
-    let blinkInterval = null;
+    // Load phrases from config/phrases.txt
+    fetch('/config/phrases.txt')
+      .then(res => res.text())
+      .then(text => {
+        // Parse phrases: support -{time}- prefix for speed (ms per char)
+        // Example: -40-This is a fast phrase
+        const phrases = text.split('\n')
+          .map(l => l.trim())
+          .filter(Boolean)
+          .filter(line => !/^-\#-/.test(line)) // Ignore commented phrases
+          .map(line => {
+            // Match -{speed}--{color}--{tags}-Phrase, tags can be multiple separated by --
+            const match = line.match(/^-(\d+)-(?:-([#a-zA-Z0-9#]+)-)?(?:-((?:[a-z]+(?:--[a-z]+)*))-)?(.+)/i);
+            if (match) {
+              return {
+                text: match[4].trim(),
+                speed: parseInt(match[1], 10),
+                color: match[2] ? match[2].trim() : null,
+                tags: match[3] ? match[3].split('--') : []
+              };
+            }
+            return { text: line, speed: 70, color: null, tags: [] }; // default speed/color/tags
+          });
+        const typewriter = document.getElementById('typewriter');
+        const cursor = document.getElementById('cursor');
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let typing = true;
+        let blinkInterval = null;
 
-    function blinkCursor() {
-      cursor.style.visibility = (cursor.style.visibility === 'hidden') ? 'visible' : 'hidden';
-    }
-
-    function startBlink() {
-      if (!blinkInterval) blinkInterval = setInterval(blinkCursor, 500);
-    }
-
-    function stopBlink() {
-      if (blinkInterval) clearInterval(blinkInterval);
-      blinkInterval = null;
-      cursor.style.visibility = 'visible';
-    }
-
-    function typeLoop() {
-      stopBlink();
-      const currentPhrase = phrases[phraseIndex];
-      if (typing) {
-        if (charIndex < currentPhrase.length) {
-          typewriter.textContent += currentPhrase[charIndex];
-          charIndex++;
-          setTimeout(typeLoop, 70);
-        } else {
-          typing = false;
-          startBlink();
-          setTimeout(typeLoop, 1200);
+        // Apply tags for formatting: -b- for bold, -i- for italics, -u- for underline, -s- for strikethrough, -code- for code
+        function applyTags(text, tags) {
+          let result = text;
+          if (tags.includes('b')) result = `<b>${result}</b>`;
+          if (tags.includes('i')) result = `<i>${result}</i>`;
+          if (tags.includes('u')) result = `<u>${result}</u>`;
+          if (tags.includes('s')) result = `<s>${result}</s>`;
+          if (tags.includes('code')) result = `<code>${result}</code>`;
+          return result;
         }
-      } else {
-        if (charIndex > 0) {
-          typewriter.textContent = currentPhrase.slice(0, charIndex - 1);
-          charIndex--;
-          setTimeout(typeLoop, 40);
-        } else {
-          typing = true;
-          phraseIndex = (phraseIndex + 1) % phrases.length;
-          setTimeout(typeLoop, 400);
-        }
-      }
-    }
 
-    typeLoop();
+        function blinkCursor() {
+          cursor.style.visibility = (cursor.style.visibility === 'hidden') ? 'visible' : 'hidden';
+        }
+
+        function startBlink() {
+          if (!blinkInterval) blinkInterval = setInterval(blinkCursor, 500);
+        }
+
+        function stopBlink() {
+          if (blinkInterval) clearInterval(blinkInterval);
+          blinkInterval = null;
+          cursor.style.visibility = 'visible';
+        }
+
+        function typeLoop() {
+          stopBlink();
+          const current = phrases[phraseIndex];
+          const currentPhrase = current.text;
+          const speed = current.speed;
+          const color = current.color;
+          const tags = current.tags;
+          if (typing) {
+            if (charIndex < currentPhrase.length) {
+              const partial = currentPhrase.slice(0, charIndex + 1);
+              typewriter.innerHTML = applyTags(partial, tags);
+              if (color) typewriter.style.color = color;
+              else typewriter.style.color = "#fff";
+              charIndex++;
+              setTimeout(typeLoop, speed);
+            } else {
+              typing = false;
+              typewriter.innerHTML = applyTags(currentPhrase, tags);
+              if (color) typewriter.style.color = color;
+              else typewriter.style.color = "#fff";
+              startBlink();
+              setTimeout(typeLoop, 1200);
+            }
+          } else {
+            if (charIndex > 0) {
+              const partial = currentPhrase.slice(0, charIndex - 1);
+              typewriter.innerHTML = applyTags(partial, tags);
+              if (color) typewriter.style.color = color;
+              else typewriter.style.color = "#fff";
+              charIndex--;
+              setTimeout(typeLoop, 40);
+            } else {
+              typing = true;
+              phraseIndex = (phraseIndex + 1) % phrases.length;
+              setTimeout(typeLoop, 400);
+            }
+          }
+        }
+
+        typeLoop();
+      });
   });
   </script>
   <script>

@@ -1,0 +1,7 @@
+-#-Commented line looks like this; do -{ms}- to set speed
+-20--#FF0000-Phrase 1
+-100-I'm too lazy to write all of these
+-40--#ff69b4--b--i-This is pink, bold, and italic!
+-120--red--u--s-This is slow, red, underlined, and strikethrough.
+-60--#00ff00--code-This is green and code style.
+This one uses the default color, speed, and no formatting.
