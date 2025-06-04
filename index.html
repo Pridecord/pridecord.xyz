@@ -335,6 +335,13 @@ function getFlagColor(flag, idx, total, time) {
   let width = window.innerWidth;
   let height = window.innerHeight;
 
+  function getResponsiveGrid() {
+    const minDotSpacing = 22; // px
+    const cols = Math.max(6, Math.floor(width / minDotSpacing));
+    const rows = Math.max(4, Math.floor(height / minDotSpacing));
+    return { cols, rows };
+  }
+
   function resize() {
     width = window.innerWidth;
     height = window.innerHeight;
@@ -344,11 +351,10 @@ function getFlagColor(flag, idx, total, time) {
   window.addEventListener('resize', resize);
   resize();
 
-  const cols = 48;
-  const rows = 18;
   const dotRadius = 5;
 
   function drawWave(time) {
+    const { cols, rows } = getResponsiveGrid();
     const dotSpacingX = width / (cols + 1);
     const dotSpacingY = height / (rows + 1);
     ctx.clearRect(0, 0, width, height);
