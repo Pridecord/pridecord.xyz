@@ -443,13 +443,10 @@ function getFlagColor(flag, idx, total, time) {
     ctx.clearRect(0, 0, width, height);
 
     const typeDiv = document.getElementById('typewriter-text');
+    let textRect = null;
     if (typeDiv) {
-      const rect = typeDiv.getBoundingClientRect();
-      ctx.save();
-      ctx.globalAlpha = 0.80;
-      ctx.fillStyle = "#000";
-      ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
-      ctx.restore();
+      // Use getBoundingClientRect to get the position relative to the viewport
+      textRect = typeDiv.getBoundingClientRect();
     }
 
     for (let y = 0; y < rows; y++) {
@@ -462,12 +459,36 @@ function getFlagColor(flag, idx, total, time) {
 
         let color = getFlagColor(currentFlag, x, cols, time + y * 100);
 
+        // Dim the dot if it's inside the typewriter-text area, fade near the edge
+        let alpha = 0.85;
+        if (textRect) {
+          // Distance from center of dot to nearest edge of the text box
+          const dx = Math.max(textRect.left - px, 0, px - textRect.right);
+          const dy = Math.max(textRect.top - py, 0, py - textRect.bottom);
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          // Fade radius in pixels (adjust for softness)
+          const fadeRadius = 40;
+          // If inside, dist = 0; if outside, dist > 0
+          if (
+            px >= textRect.left &&
+            px <= textRect.right &&
+            py >= textRect.top &&
+            py <= textRect.bottom
+          ) {
+            alpha = 0.18;
+          } else if (dist < fadeRadius) {
+            // Linear fade from 0.18 (inside) to 0.85 (outside)
+            alpha = 0.18 + (0.85 - 0.18) * (dist / fadeRadius);
+          }
+        }
+
         ctx.beginPath();
         ctx.arc(px, py, dotRadius, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.shadowColor = color;
         ctx.shadowBlur = 16;
-        ctx.globalAlpha = 0.85;
+        ctx.globalAlpha = alpha;
         ctx.fill();
         ctx.shadowBlur = 0;
         ctx.globalAlpha = 1;
