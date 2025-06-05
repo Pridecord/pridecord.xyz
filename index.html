@@ -238,7 +238,7 @@
   <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Load phrases from config/phrases.txt
-    fetch('/public/config/phrases.txt')
+    fetch('./public/config/phrases.txt')
       .then(res => res.text())
       .then(text => {
         // Parse phrases: support -{time}- prefix for speed (ms per char)
