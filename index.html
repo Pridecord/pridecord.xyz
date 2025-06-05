@@ -302,7 +302,8 @@
           if (typing) {
             if (charIndex < currentPhrase.length) {
               const partial = currentPhrase.slice(0, charIndex + 1);
-              typewriter.innerHTML = applyTags(partial, tags);
+              // Escape HTML while typing to avoid Safari issues
+              typewriter.innerHTML = escapeHTML(partial);
               if (color) typewriter.style.color = color;
               else typewriter.style.color = "#fff";
               charIndex++;
@@ -318,7 +319,7 @@
           } else {
             if (charIndex > 0) {
               const partial = currentPhrase.slice(0, charIndex - 1);
-              typewriter.innerHTML = applyTags(partial, tags);
+              typewriter.innerHTML = escapeHTML(partial);
               if (color) typewriter.style.color = color;
               else typewriter.style.color = "#fff";
               charIndex--;
@@ -533,6 +534,19 @@ function getFlagColor(flag, idx, total, time) {
     }
   })();
 })();
+</script>
+<script>
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, function(m) {
+    return ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[m];
+  });
+}
 </script>
 </body>
 </html>
