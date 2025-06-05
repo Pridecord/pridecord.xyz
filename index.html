@@ -184,7 +184,7 @@
   <h1 class="rainbow-title">Pridecord</h1>
   <canvas id="wave-canvas"></canvas>
   <img
-    src="Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png"
+    src="/public/Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png"
     alt="Pridecord Logo"
     class="centered-img"
     style="max-width: 300px; max-height: 300px; transform: translateY(-50px);"
@@ -199,7 +199,7 @@
     style="transform: translateY(-50px)"
   >
     <img
-      src="Discord-Logo-700x394-2074227168-removebg-preview.png"
+      src="/public/Discord-Logo-700x394-2074227168-removebg-preview.png"
       alt="Discord Logo"
       class="discord-logo"
     >
@@ -238,7 +238,7 @@
   <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Load phrases from config/phrases.txt
-    fetch('/config/phrases.txt')
+    fetch('/public/config/phrases.txt')
       .then(res => res.text())
       .then(text => {
         // Parse phrases: support -{time}- prefix for speed (ms per char)
