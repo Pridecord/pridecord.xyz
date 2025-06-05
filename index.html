@@ -237,12 +237,9 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Load phrases from config/phrases.txt
-    fetch('./config/phrases.txt')
+    fetch('/pridecord.xyz/public/config/phrases.txt')
       .then(res => res.text())
       .then(text => {
-        // Parse phrases: support -{time}- prefix for speed (ms per char)
-        // Example: -40-This is a fast phrase
         const phrases = text.split('\n')
           .map(l => l.trim())
           .filter(Boolean)
