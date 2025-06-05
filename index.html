@@ -269,7 +269,7 @@
 
         // Apply tags for formatting: -b- for bold, -i- for italics, -u- for underline, -s- for strikethrough, -code- for code
         function applyTags(text, tags) {
-          let result = text;
+          let result = escapeHTML(text); // Always escape first!
           if (tags.includes('b')) result = `<b>${result}</b>`;
           if (tags.includes('i')) result = `<i>${result}</i>`;
           if (tags.includes('u')) result = `<u>${result}</u>`;
@@ -302,7 +302,6 @@
           if (typing) {
             if (charIndex < currentPhrase.length) {
               const partial = currentPhrase.slice(0, charIndex + 1);
-              // Escape HTML while typing to avoid Safari issues
               typewriter.innerHTML = escapeHTML(partial);
               if (color) typewriter.style.color = color;
               else typewriter.style.color = "#fff";
@@ -310,7 +309,7 @@
               setTimeout(typeLoop, speed);
             } else {
               typing = false;
-              typewriter.innerHTML = applyTags(currentPhrase, tags);
+              typewriter.innerHTML = applyTags(currentPhrase, tags); // Always safe HTML
               if (color) typewriter.style.color = color;
               else typewriter.style.color = "#fff";
               startBlink();
