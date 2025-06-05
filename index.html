@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png">
+  <link rel="icon" type="image/png" href="./public/Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png">
   <style>
     html, body, * {
       user-select: none;
@@ -184,7 +184,7 @@
   <h1 class="rainbow-title">Pridecord</h1>
   <canvas id="wave-canvas"></canvas>
   <img
-    src="Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png"
+    src="./public/Pridecord_Progressive_Pride_Flag_w_Cat_Server_Avatar-removebg-preview.png"
     alt="Pridecord Logo"
     class="centered-img"
     style="max-width: 300px; max-height: 300px; transform: translateY(-50px);"
@@ -237,7 +237,7 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', function () {
-    fetch('/pridecord.xyz/public/config/phrases.txt')
+    fetch('./public/config/phrases.txt')
       .then(res => res.text())
       .then(text => {
         const phrases = text.split('\n')
