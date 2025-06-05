@@ -14,11 +14,6 @@ app.get('/rules', (req, res) => {
   res.sendFile(path.join(__dirname, 'rules.html'));
 });
 
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-// API routes
-app.use('/api', require('./api/login'));
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+console.warn('This server is for development purposes only. Do not use otherwise.');
