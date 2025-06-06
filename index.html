@@ -245,8 +245,8 @@
           .filter(Boolean)
           .filter(line => !/^-\#-/.test(line)) // Ignore commented phrases
           .map(line => {
-            // Match -{speed}--{color}--{tags}-Phrase, tags can be multiple separated by --
-            const match = line.match(/^-(\d+)-(?:-([#a-zA-Z0-9#]+)-)?(?:-((?:[a-z]+(?:--[a-z]+)*))-)?(.+)/i);
+            // -speed--color--tags-Phrase
+            let match = line.match(/^-(\d+)-(?:-([#a-zA-Z0-9#]+)-)?(?:-((?:[a-z]+(?:--[a-z]+)*))-)?(.+)/i);
             if (match) {
               return {
                 text: match[4].trim(),
@@ -255,7 +255,38 @@
                 tags: match[3] ? match[3].split('--') : []
               };
             }
-            return { text: line, speed: 70, color: null, tags: [] }; // default speed/color/tags
+            // --color--tags-Phrase (no speed)
+            match = line.match(/^--([#a-zA-Z0-9#]+)-(?:-((?:[a-z]+(?:--[a-z]+)*))-)?(.+)/i);
+            if (match) {
+              return {
+                text: match[3].trim(),
+                speed: 70,
+                color: match[1] ? match[1].trim() : null,
+                tags: match[2] ? match[2].split('--') : []
+              };
+            }
+            // -#color-Phrase (no speed, just color)
+            match = line.match(/^-\#([a-zA-Z0-9#]+)-(.+)/i);
+            if (match) {
+              return {
+                text: match[2].trim(),
+                speed: 70,
+                color: '#' + match[1].trim(),
+                tags: []
+              };
+            }
+            // -speed-Phrase (no color)
+            match = line.match(/^-(\d+)-(.+)/i);
+            if (match) {
+              return {
+                text: match[2].trim(),
+                speed: parseInt(match[1], 10),
+                color: null,
+                tags: []
+              };
+            }
+            // Fallback: just text
+            return { text: line, speed: 70, color: null, tags: [] };
           });
         const typewriter = document.getElementById('typewriter');
         const cursor = document.getElementById('cursor');
